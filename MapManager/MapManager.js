@@ -4,8 +4,8 @@ var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var MapManager = MapManager || (function () {
     'use strict';
 
-    var version = '1.0.1';
-    var lastUpdate = 1684077246;
+    var version = '1.0.2';
+    var lastUpdate = 1684106306;
 
     var scriptName = 'Map Manager';
     var apiCall = '!mm';
@@ -718,7 +718,7 @@ var MapManager = MapManager || (function () {
     }
     var updateHandout = function () {
         var handout = getHandout();
-        handout.set("notes", JSON.stringify(state.MapManager, null, 2));
+        handout.set("gmnotes", JSON.stringify(state.MapManager, null, 2));
     }
     var parseJson = function (str) {
         var obj;
