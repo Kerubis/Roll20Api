@@ -1,8 +1,11 @@
+// Github:   https://github.com/Kerubis/Roll20Api/MapManager
+// By:       Kerubis
+var API_Meta = API_Meta||{}; //eslint-disable-line no-var
 var MapManager = MapManager || (function () {
     'use strict';
 
     var version = '1.0.0';
-    var lastUpdate = 1683980883;
+    var lastUpdate = 1684077246;
 
     var scriptName = 'Map Manager';
     var apiCall = '!mm';
