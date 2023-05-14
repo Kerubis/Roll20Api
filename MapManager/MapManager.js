@@ -1,10 +1,10 @@
 // Github:   https://github.com/Kerubis/Roll20Api/MapManager
 // By:       Kerubis
-var API_Meta = API_Meta||{}; //eslint-disable-line no-var
+var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var MapManager = MapManager || (function () {
     'use strict';
 
-    var version = '1.0.0';
+    var version = '1.0.1';
     var lastUpdate = 1684077246;
 
     var scriptName = 'Map Manager';
@@ -48,7 +48,7 @@ var MapManager = MapManager || (function () {
             case "edit":
                 cmdEditMap(msg, params);
                 return;
-            case "update":
+            case "updatemaps":
                 cmdUpdateMapList(msg, params);
                 return;
             case "category":
@@ -56,6 +56,12 @@ var MapManager = MapManager || (function () {
                 return;
             case "changelimit":
                 cmdChangeLimit(msg, params);
+                return;
+            case "changesortorder":
+                cmdChangeSortOrder(msg, params);
+                return;
+            case "updatehandout":
+                cmdUpdateHandout(msg, params);
                 return;
             case "resetmaps":
                 cmdResetMaps(msg, params);
@@ -79,7 +85,6 @@ var MapManager = MapManager || (function () {
     }
     var cmdList = function (msg, params) {
         var isGm = playerIsGM(msg.playerid);
-        log(isGm);
 
         var mapsToList = state.MapManager.maps;
         if (!isGm) {
@@ -169,6 +174,9 @@ var MapManager = MapManager || (function () {
                 case "hidden":
                     mapsToList = mapsToList.filter(m => m.isHidden)
                     break;
+                case "uncategorized":
+                    mapsToList = mapsToList.filter(m => m.categories.length === 0)
+                    break;
                 default:
                     mapsToList = [mapsToList.find(m => m.id === params[1])];
                     break;
@@ -195,11 +203,17 @@ var MapManager = MapManager || (function () {
     }
     var cmdCategory = function (msg, params) {
         switch (params[1]) {
-            case "new":
-                newCategory(params[2]);
-                break;
             case "add":
+                addCategory(params[2]);
+                break
+            case "remove":
+                removeCategory(params[2]);
+                break;
+            case "addtomap":
                 addCategoryToMap(params[2], params[3]);
+                break;
+            case "removefrommap":
+                removeCategoryFromMap(params[2], params[3]);
                 break;
             case "assign":
                 assignCategoryToMap(params[2]);
@@ -223,6 +237,18 @@ var MapManager = MapManager || (function () {
                 break;
         }
     }
+    var cmdChangeSortOrder = function (msg, params) {
+        var isGm = playerIsGM(msg.playerid);
+        if (!isGm) {
+            return;
+        }
+        if (params[1] !== undefined) {
+            state.MapManager.config.sortOrder = params[1];
+        }
+    }
+    var cmdUpdateHandout = function (msg, params) {
+        updateHandout();
+    }
     var cmdResetMaps = function (msg, params) {
         resetMaps(msg);
     }
@@ -230,8 +256,8 @@ var MapManager = MapManager || (function () {
         resetCategories(msg);
     }
     var cmdTest = function (msg, params) {
-        log('No Test implemented');
-        whisper('gm', 'No Test implemented');
+        log(msg);
+        updateHandout();
     }
     var unknownCommand = function (msg, params) {
         var response = 'Unknown Command';
@@ -293,6 +319,7 @@ var MapManager = MapManager || (function () {
             var row1 = myTable.addRow();
             row1.style += ' background:#04AA6D;"';
             row1.addColumn(link(apiCall + ' listedit', 'Maps'));
+            row1.addColumn(link(apiCall + ' listedit uncategorized', 'Uncategorized'));
             row1.addColumn(link(apiCall + ' listedit hidden', 'Hidden'));
             row1.addColumn(link(apiCall + ' listedit all', 'All'));
             output += myTable.createHtml();
@@ -308,6 +335,8 @@ var MapManager = MapManager || (function () {
             var row1 = myTable.addRow();
             row1.style += ' background:#04AA6D;"';
             row1.addColumn(link(apiCall + ' category', 'Category'));
+            row1.addColumn(link(apiCall + ' category add ?{Category Name}', 'Add Category'));
+
             output += myTable.createHtml();
         }
 
@@ -325,6 +354,22 @@ var MapManager = MapManager || (function () {
             output += myTable.createHtml();
         }
 
+        //Config
+        if (isGm) {
+            var myTable = table();
+            var headerRow = myTable.addRow();
+            var headerColumn = headerRow.addColumn('Config')
+            headerColumn.attributes += ' colspan="10"';
+
+            var row1 = myTable.addRow();
+            row1.style += ' background:#04AA6D;"';
+            row1.addColumn(link(apiCall + ' changelimit top ?{Amount}', 'Change Top x'));
+            row1.addColumn(link(apiCall + ' changelimit last ?{Amount}', 'Change Last X'));
+            row1.addColumn(link(apiCall + ' changesortorder ?{Order|drawer, Drawer|asc, Ascending|desc, Descending}', 'Sort Order'));
+
+            output += myTable.createHtml();
+        }
+
         //Admin
         if (isGm) {
             var myTable = table();
@@ -332,11 +377,12 @@ var MapManager = MapManager || (function () {
             var headerColumn = headerRow.addColumn('Admin')
             headerColumn.attributes += ' colspan="10"';
 
-            var row1 = myTable.addRow();
-            row1.style += ' background:#04AA6D;"';
-            row1.addColumn(link(apiCall + ' updatemaps', 'Update Maps'));
-            row1.addColumn(link(apiCall + '  ?{U sure?|Nah,|Reset,resetmaps}', 'Reset Maps'));
-            row1.addColumn(link(apiCall + '  ?{U sure?|Nah,|Reset,resetcategories}', 'Reset Categories'));
+            var row2 = myTable.addRow();
+            row2.style += ' background:#04AA6D;"';
+            row2.addColumn(link(apiCall + ' updatemaps', 'Update Maps'));
+            row2.addColumn(link(apiCall + '  ?{U sure?|Nah,|Reset,resetmaps}', 'Reset Maps'));
+            row2.addColumn(link(apiCall + '  ?{U sure?|Nah,|Reset,resetcategories}', 'Reset Categories'));
+
             output += myTable.createHtml();
         }
         whisper(msg.who, output)
@@ -344,6 +390,14 @@ var MapManager = MapManager || (function () {
     var listMaps = function (msg, mapsToList) {
         if (mapsToList.length === 0) {
             return;
+        }
+        switch (state.MapManager.config.sortOrder) {
+            case 'asc':
+                mapsToList = mapsToList.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+                break;
+            case 'desc':
+                mapsToList = mapsToList.sort((a, b) => (a.name < b.name) ? 1 : ((b.name < a.name) ? -1 : 0));
+                break;
         }
 
         var isGm = playerIsGM(msg.playerid);
@@ -365,7 +419,7 @@ var MapManager = MapManager || (function () {
 
         var myTable = table();
         var headerRow = myTable.addRow();
-        var headerColumn = headerRow.addColumn('Maps');
+        var headerColumn = headerRow.addColumn(link(msg.content, 'Maps'));
         headerColumn.attributes = 'colspan="10"';
         for (var key in mapsToList) {
             var map = mapsToList[key];
@@ -384,9 +438,13 @@ var MapManager = MapManager || (function () {
         whisper(who, output);
     }
     var listEdit = function (msg, mapsToList) {
+        var isGm = playerIsGM(msg.playerid);
+        if (!isGm) {
+            return;
+        }
         var myTable = table();
         var headerRow = myTable.addRow();
-        var headerColumn = headerRow.addColumn('Maps');
+        var headerColumn = headerRow.addColumn(link(msg.content, 'Maps'));
         headerColumn.attributes = 'colspan="10"';
 
         for (var key in mapsToList) {
@@ -406,9 +464,13 @@ var MapManager = MapManager || (function () {
             }
             categoryDropdown += '}';
 
-            row.addColumn(link(apiCall + ' category add ' + categoryDropdown + ' ' + map.id, 'Category'));
+            row.addColumn(link(apiCall + ' category addtomap ' + categoryDropdown + ' ' + map.id, 'Category'));
         }
+
         var output = myTable.createHtml();
+        if (mapsToList.length === 1) {
+            output += getMapCategories(msg, mapsToList[0]);
+        }
         output += getMessageFooter(true);
         whisper(msg.who, output);
     }
@@ -449,6 +511,7 @@ var MapManager = MapManager || (function () {
             if (obj.name !== mapName) { obj.name = mapName; updated = true; }
             if (obj.isPublic === undefined) { obj.isPublic = false; updated = true; }
             if (obj.isHidden === undefined) { obj.isHidden = false; updated = true; }
+            if (obj.categories === undefined) { obj.categories = []; updated = true; }
         }
 
         if (updated) {
@@ -457,52 +520,95 @@ var MapManager = MapManager || (function () {
         return false;
     }
     var listCategories = function (msg) {
+        var imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
+
+        var isGm = playerIsGM(msg.playerid);
+
         var categoryTable = table();
         var categoryHeaderRow = categoryTable.addRow();
-        var categoryHeaderColum = categoryHeaderRow.addColumn('Categories');
+        var categoryHeaderColum = categoryHeaderRow.addColumn(link(msg.content, 'Categories'));
         categoryHeaderColum.attributes += ' colspan="10"';
+
         for (var categoryKey in state.MapManager.categories) {
             var category = state.MapManager.categories[categoryKey];
             var categoryRow = categoryTable.addRow();
             categoryRow.addColumn(link(apiCall + ' list category ' + category, category));
             categoryRow.addColumn(link(apiCall + ' category assign ' + category, 'Assign Maps'));
+            categoryRow.addColumn(link(apiCall + ' category remove ' + category, imgDelete));
         }
-        whisper('gm', categoryTable.createHtml());
+
+        var output = '';
+        output += categoryTable.createHtml();
+        output += getMessageFooter(isGm);
+        whisper('gm', output);
     }
-    var newCategory = function (newCategory) {
-        if (!state.MapManager.categories.includes(newCategory)) {
-            state.MapManager.categories.push(newCategory);
+    var getMapCategories = function (msg, map) {
+        var imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
+
+        var categoryTable = table();
+        var categoryHeaderRow = categoryTable.addRow();
+        var categoryHeaderColum = categoryHeaderRow.addColumn(span('Categories'));
+        categoryHeaderColum.attributes += ' colspan="10"';
+
+        for (var categoryKey in map.categories) {
+            var category = map.categories[categoryKey];
+            var categoryRow = categoryTable.addRow();
+            categoryRow.addColumn(link(apiCall + ' list category ' + category, category));
+            categoryRow.addColumn(link(apiCall + ' category removefrommap ' + category + ' ' + map.id, imgDelete));
+        }
+
+        return categoryTable.createHtml();
+    }
+    var addCategory = function (addCategory) {
+        if (!state.MapManager.categories.includes(addCategory)) {
+            state.MapManager.categories.push(addCategory);
+            state.MapManager.categories.sort();
         }
     }
-    var addCategoryToMap = function (category, map) {
-        var map = state.MapManager.maps.find(m => m.id === map);
-        if (map.categories === undefined) {
-            map.categories = [];
+    var removeCategory = function (removeCategory) {
+        var mapsToCheck = state.MapManager.maps.filter(m => m.categories.includes(removeCategory));
+        if (mapsToCheck.length === 0) {
+            var index = state.MapManager.categories.indexOf(removeCategory);
+            state.MapManager.categories.splice(index, 1);
+        } else {
+            whisper('gm', 'Category can not be remove while assigned to maps')
         }
-        if (!map.categories.includes(category)) {
-            map.categories.push(category);
+    }
+    var addCategoryToMap = function (addCategory, toMap) {
+        if (addCategory === undefined || toMap === undefined) {
+            return;
+        }
+        var map = state.MapManager.maps.find(m => m.id === toMap);
+        if (!map.categories.includes(addCategory)) {
+            map.categories.push(addCategory);
+        }
+    }
+    var removeCategoryFromMap = function (removeCategory, fromMap) {
+        if (removeCategory === undefined || fromMap === undefined) {
+            return;
+        }
+        var map = state.MapManager.maps.find(m => m.id === fromMap);
+        if (map.categories.includes(removeCategory)) {
+            var index = map.categories.indexOf(removeCategory);
+            map.categories.splice(index, 1);
         }
     }
     var assignCategoryToMap = function (category) {
         var mapTable = table();
         var mapHeaderRow = mapTable.addRow();
-        var mapHeaderColum = mapHeaderRow.addColumn('Assign Maps to ' + category)
+        var mapHeaderColum = mapHeaderRow.addColumn(link(msg.content, 'Assign Maps to ' + category));
         mapHeaderColum.attributes += ' colspan="10"'
         for (var mapKey in state.MapManager.maps) {
             var map = state.MapManager.maps[mapKey];
             var mapRow = mapTable.addRow();
-            mapRow.addColumn(link(apiCall + ' category add ' + category + ' ' + map.id, map.name));
+            mapRow.addColumn(link(apiCall + ' category addtomap ' + category + ' ' + map.id, map.name));
         }
         var output = mapTable.createHtml();
         output += getMessageFooter(true);
         whisper('gm', output)
     }
     var getMapsWithCategory = function (mapsToList, category) {
-        log(category);
-        mapsToList = mapsToList.filter(m => m.categories !== undefined);
-        log(mapsToList);
         mapsToList = mapsToList.filter(m => m.categories.includes(category));
-        log(mapsToList);
         return mapsToList;
     }
     var resetMaps = function (msg) {
@@ -526,7 +632,25 @@ var MapManager = MapManager || (function () {
     var getMessageFooter = function (isGm) {
         var output = getUtilTable(isGm);
         output += getNavTable(isGm);
-        return output;
+        return getQuickTable(isGm);
+    }
+    var getQuickTable = function (isGm) {
+        var myTable = table();
+        var headerRow = myTable.addRow();
+        var headerColumn = headerRow.addColumn('Quick Links')
+        headerColumn.attributes += ' colspan="10"';
+
+        var row1 = myTable.addRow();
+        row1.style += ' background:#04AA6D;"'
+        if (isGm) {
+            row1.addColumn(link(apiCall + ' list top ' + state.MapManager.config.listTopAmount, 'Top ' + state.MapManager.config.listTopAmount));
+            row1.addColumn(link(apiCall + ' list last ' + state.MapManager.config.listLastAmount, 'Last ' + state.MapManager.config.listLastAmount));
+            row1.addColumn(link(apiCall + ' category', 'Categories'));
+            row1.addColumn(link(apiCall + ' rejoinall', 'Rejoin All'));
+        } else {
+            row1.addColumn(link(apiCall + ' rejoin', 'Rejoin'));
+        }
+        return myTable.createHtml()
     }
     var getUtilTable = function (isGm) {
         var utilTable = table();
@@ -554,13 +678,14 @@ var MapManager = MapManager || (function () {
         if (isGm) {
             navRow1.addColumn(link(apiCall + ' list', 'Maps'));
             navRow1.addColumn(link(apiCall + ' list public', 'Public'));
+            navRow1.addColumn(link(apiCall + ' category', 'Categories'));
             navRow1.addColumn(link(apiCall + ' list top ' + state.MapManager.config.listTopAmount, 'Top ' + state.MapManager.config.listTopAmount));
             navRow1.addColumn(link(apiCall + ' list last ' + state.MapManager.config.listLastAmount, 'Last ' + state.MapManager.config.listLastAmount));
-            navRow1.addColumn(link(apiCall + ' category', 'Categories'));
-            var navRow2 = navTable.addRow();
-            navRow2.style += ' background:#04AA6D;"'
-            navRow2.addColumn(link(apiCall, "Menu"));
-            navRow2.addColumn(link(apiCall + ' listedit', "Edit Maps"));
+
+            var navRow3 = navTable.addRow();
+            navRow3.style += ' background:#04AA6D;"'
+            navRow3.addColumn(link(apiCall, "Menu"));
+            navRow3.addColumn(link(apiCall + ' listedit', "Edit Maps"));
         } else {
             navRow1.addColumn(link(apiCall + ' list', 'Maps'));
         }
@@ -726,6 +851,7 @@ var MapManager = MapManager || (function () {
             state.MapManager = {
                 config: {
                     version: version,
+                    sortOrder: 'drawer',
                     listTopAmount: 5,
                     listLastAmount: 5
                 },
@@ -735,6 +861,10 @@ var MapManager = MapManager || (function () {
         }
         if (state.MapManager.config.version !== version) {
             whisper('gm', 'Update Version from ' + state.MapManager.config.version + ' to ' + version);
+            if (state.MapManager.config.version === '1.0.0') {
+                state.MapManager.config.version = '1.0.1';
+                state.MapManager.config.sortOrder = 'drawer';
+            }
             state.MapManager.config.version = version;
         }
         whisper('gm', scriptName + ' Started')
