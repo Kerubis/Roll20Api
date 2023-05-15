@@ -4,7 +4,7 @@ var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var MapManager = MapManager || (function () {
     'use strict';
 
-    var version = '1.0.2';
+    var version = '0.1.2';
     var lastUpdate = 1684106306;
 
     var scriptName = 'Map Manager';
@@ -256,8 +256,6 @@ var MapManager = MapManager || (function () {
         resetCategories(msg);
     }
     var cmdTest = function (msg, params) {
-        log(msg);
-        updateHandout();
     }
     var unknownCommand = function (msg, params) {
         var response = 'Unknown Command';
@@ -861,8 +859,8 @@ var MapManager = MapManager || (function () {
         }
         if (state.MapManager.config.version !== version) {
             whisper('gm', 'Update Version from ' + state.MapManager.config.version + ' to ' + version);
-            if (state.MapManager.config.version === '1.0.0') {
-                state.MapManager.config.version = '1.0.1';
+            if (state.MapManager.config.version === '0.1.1') {
+                state.MapManager.config.version = '0.1.2';
                 state.MapManager.config.sortOrder = 'drawer';
             }
             state.MapManager.config.version = version;
