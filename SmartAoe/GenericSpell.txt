@@ -1,0 +1,35 @@
+!smartaoe {{
+  --title|AoE
+															 
+  --rightsub|DC ?{Spell Save DC?|15}
+  --titlecardbackground|linear-gradient(blue, cyan)
+  
+  --oddrowbackground|#00ccff
+  --evenrowbackground|#edfcfc
+  --oddrowfontcolor|#000000
+  --tablebgcolor|#edfcfc
+  
+  --controlTokName|AoEControlToken
+  --controlTokSize|1
+  
+  --aoeColor|#00ccff50
+  --aoeOutlineColor|#0099ff
+  --aoeType|?{AOE Type|Line,line|Square,square|Circle,circle|Cone,5econe|Wall,wall}, ?{From Caster|True,|False,float}
+  --radius|?{Size?|30}ft
+  --width|2ft
+  --minGridArea|0.25
+  --minTokArea|0.25
+  
+  --fx|burst-holy
+  --dc|?{Spell Save DC?}
+  --saveFormula|?{SaveType|Strenth,5eSTR|Dexterity,5eDEX|Constitution,5eCON|Intelligence,5eINT|Wisdom,5eWIS|Charisma,5eCHA}
+  --damageFormula1|[[?{Damage Roll?|8}]]
+  --damagetype1|?{Damage Type|acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder}
+  --resistAttr|npc_resistances
+  --immunityAttr|npc_immunities
+  --vulnerableAttr|npc_vulnerabilities
+  
+  --autoApply|yes
+  --bar|1
+  --zeroHPmarker|dead
+}}

@@ -1,0 +1,23 @@
+!smartaoe {{  
+    --aoeType|circle, float
+    --forceIntersection|1
+    --radius|20ft
+    --origin|nearest, face
+    --minGridArea|0.25
+    --minTokArea|0.25
+    --fx|burn-fire
+    --dc|@{selected|spell_save_dc}
+    --saveFormula|5eDEX
+    --damageFormula1|[[9d6]]
+    --damageType1|fire
+    --ignore|SmartAOE_ignore,1 
+    --instant|1
+  
+    --aoeColor|#F3470050
+    --aoeOutlineColor|#F34700
+
+    --autoApply|1
+    --bar|3
+    --zeroHPmarker|dead
+    --nooutput|1
+  }}
