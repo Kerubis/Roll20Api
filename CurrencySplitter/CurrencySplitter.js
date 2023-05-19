@@ -1,16 +1,16 @@
-var CurrencySplitter = CurrencySplitter || (function() {
+var CurrencySplitter = CurrencySplitter || (function () {
     'use strict';
 
     var version = '0.0.2';
     var lastUpdate = 20220208;
     var schemaVersion = 0.5;
-    
+
     var defaultPartySize = 4;
-    
-    var checkInstall = function() {
+
+    var checkInstall = function () {
         //sendChat("CurrencySplitter", "/w gm CurrencySplitter Ready");
     };
-    
+
     const getAttr = function (charId, name) {
         return findObjs({
             type: 'attribute',
@@ -20,31 +20,31 @@ var CurrencySplitter = CurrencySplitter || (function() {
             caseInsensitive: true
         })[0];
     };
-  
-    var handleInput = function(msg) {
+
+    var handleInput = function (msg) {
         // Check that the message sent is for the api, if not return as we don't need to do anything.
         if (msg.type !== "api") {
             return;
         }
-        
+
         var args = msg.content.split(/\s/);
         // Parse the first section of the arguments to get an array containing the commands.
         var commands = parseCommands(args.shift());
         // Parse the remaining aruments to get any parameters passed in.
         var params = parseParameters(args);
-        
+
         switch (commands.shift().toLowerCase()) {
             case "!cs":
                 splitCurrency(msg, params);
-            break;
+                break;
             default:
                 // If we reached here it means that the call to the api was not meant for us.
                 return;
         }
-        
+
     };
-    
-    var splitCurrency = function(msg, params){
+
+    var splitCurrency = function (msg, params) {
         var error = false;
         var platinum = 0;
         var gold = 0;
@@ -52,95 +52,95 @@ var CurrencySplitter = CurrencySplitter || (function() {
         var copper = 0;
         if (params.hasOwnProperty("p")) {
             platinum = parseInt(params.p);
-            if(isNaN(platinum)){
+            if (isNaN(platinum)) {
                 error = true;
             }
         }
         if (params.hasOwnProperty("g")) {
             gold = parseInt(params.g);
-            if(isNaN(gold)){
+            if (isNaN(gold)) {
                 error = true;
             }
         }
         if (params.hasOwnProperty("s")) {
             silver = parseInt(params.s);
-            if(isNaN(silver)){
+            if (isNaN(silver)) {
                 error = true;
             }
         }
         if (params.hasOwnProperty("c")) {
             copper = parseInt(params.c);
-            if(isNaN(copper)){
+            if (isNaN(copper)) {
                 error = true;
             }
         }
-        if(error){
+        if (error) {
             help(msg);
             return;
         }
-        
+
         var sumCopper = 0;
         sumCopper = sumCopper + platinum * 1000;
         sumCopper = sumCopper + gold * 100;
         sumCopper = sumCopper + silver * 10;
         sumCopper = sumCopper + copper;
-        
-        if(sumCopper == 0){
+
+        if (sumCopper == 0) {
             help(msg);
             return;
         }
-        
+
         var splittedCopper = 0;
         splittedCopper = sumCopper / defaultPartySize;
         splittedCopper = Math.ceil(splittedCopper);
-        
+
         var handoutCopper = splittedCopper;
         var handoutPlatinum = Math.floor(handoutCopper / 1000);
         handoutCopper -= handoutPlatinum * 1000;
-        
+
         var handoutGold = Math.floor(handoutCopper / 100);
         handoutCopper -= handoutGold * 100;
-        
+
         var handoutSilver = Math.floor(handoutCopper / 10);
         handoutCopper -= handoutSilver * 10;
-        
+
         var text;
         var text = "";
         text += "<div style='border: 1px solid black;border-radius:5px;padding:5px;'>";
         text += "<span style='font-weight:bold;'>Every Party Member receives:</span><br><br>";
         text += "<table>";
-        if(handoutPlatinum > 0){
+        if (handoutPlatinum > 0) {
             text += "<tr>";
             text += "<td style='border:none; text-decoration:underline; font-style:italic;'>Platinum:</span></td>";
-            text += "<td style='border:none; padding-left:5px;'>"+handoutPlatinum+"</td>";
+            text += "<td style='border:none; padding-left:5px;'>" + handoutPlatinum + "</td>";
             text += "</tr>";
         }
-        if(handoutGold > 0){
+        if (handoutGold > 0) {
             text += "<tr>";
             text += "<td style='border:none; text-decoration:underline; font-style:italic;'>Gold:</span></td>";
-            text += "<td style='border:none; padding-left:5px;'>"+handoutGold+"</td>";
+            text += "<td style='border:none; padding-left:5px;'>" + handoutGold + "</td>";
             text += "</tr>";
         }
-        if(handoutSilver > 0){
+        if (handoutSilver > 0) {
             text += "<tr>";
             text += "<td style='border:none; text-decoration:underline; font-style:italic;'>Silver:</span></td>";
-            text += "<td style='border:none; padding-left:5px;'>"+handoutSilver+"</td>";
+            text += "<td style='border:none; padding-left:5px;'>" + handoutSilver + "</td>";
             text += "</tr>";
         }
-        if(handoutCopper > 0){
+        if (handoutCopper > 0) {
             text += "<tr>";
             text += "<td style='border:none; text-decoration:underline; font-style:italic;'>Copper:</span></td>";
-            text += "<td style='border:none; padding-left:5px;'>"+handoutCopper+"</td>";
+            text += "<td style='border:none; padding-left:5px;'>" + handoutCopper + "</td>";
             text += "</tr>";
         }
         text += "</table>";
         text += "</div>";
-        
+
         chat("", "", text);
-        
+
     };
-    
-    var help = function(msg) {
+
+    var help = function (msg) {
         var text = "";
         text += "<div style='border: 1px solid black;border-radius:5px;padding:5px;'>";
         text += "<span style='font-weight:bold;'>Message must contain at least one parameter with a number!</span><br><br>";
@@ -166,14 +166,14 @@ var CurrencySplitter = CurrencySplitter || (function() {
         text += "</div>";
         chat("/w", msg.who, text);
     };
-    
-    var chat = function(type, who, message) {
+
+    var chat = function (type, who, message) {
         who = who.split(" ")[0].replace(" (GM)", "");
-        sendChat("Currency Splitter", type + " " + who + " " + message, {noarchive:true});
+        sendChat("Currency Splitter", type + " " + who + " " + message, { noarchive: true });
     };
-    
+
     // Parses the commands of the call to the api script.
-    var parseCommands = function(args) {
+    var parseCommands = function (args) {
         if (args === undefined) {
             // If it is then return an empty array.
             return [];
@@ -181,9 +181,9 @@ var CurrencySplitter = CurrencySplitter || (function() {
         // Split the arguments by spaces and return the array containing them all.
         return args.split(/\s+/);
     };
-    
+
     // Parses the parameters of the call to the api script.
-    var parseParameters = function(args) {
+    var parseParameters = function (args) {
         // Check if args is undefined.
         if (args === undefined) {
             // If it is then return an empty object.
@@ -205,8 +205,8 @@ var CurrencySplitter = CurrencySplitter || (function() {
         // Return the constructed object of parameters.
         return params;
     };
-    
-    var registerEventHandlers = function() {
+
+    var registerEventHandlers = function () {
         on('chat:message', handleInput);
         //on('add:graphic', setTokenAttributes);
         //on('change:graphic', setTokenAttributes);
@@ -218,8 +218,8 @@ var CurrencySplitter = CurrencySplitter || (function() {
     };
 }());
 
-on("ready",function(){
+on("ready", function () {
     'use strict';
-    CurrencySplitter.CheckInstall(); 
+    CurrencySplitter.CheckInstall();
     CurrencySplitter.RegisterEventHandlers();
 });
