@@ -4,7 +4,7 @@ var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var MapManager = MapManager || (function () {
     'use strict';
 
-    var version = '0.2.3';
+    var version = '0.2.4';
     var lastUpdate = 1684106306;
 
     var scriptName = 'Map Manager';
@@ -12,29 +12,6 @@ var MapManager = MapManager || (function () {
 
 
     var msgConst = { "content": apiCall, "playerid": "gm", "type": "api", "who": "gm" }
-    const updateVersion = function () {
-        whisper(msgConst, 'Update Version from ' + state.MapManager.config.version + ' to ' + version);
-        if (state.MapManager.config.version === '0.1.1') {
-            state.MapManager.config.version = '0.1.2';
-            state.MapManager.config.sortOrder = 'drawer';
-        }
-        if (state.MapManager.config.version === '0.1.2') {
-            state.MapManager.config.version = '0.2.0';
-            state.MapManager.teleporter = [];
-        }
-        if (state.MapManager.config.version === '0.2.1') {
-            state.MapManager.config.version = '0.2.2';
-            state.MapManager.config.output = 'handout';
-            state.MapManager.config.handoutHeight = 500;
-            state.MapManager.config.handoutWidth = 500;
-        }
-        if (state.MapManager.config.version === '0.2.2') {
-            state.MapManager.config.version = '0.2.3';
-            state.MapManager.config.outputType = state.MapManager.config.output;
-            state.MapManager.config.output = undefined;
-        }
-        state.MapManager.config.version = version;
-    }
     const handleCommand = function (msg, params) {
         if (params[0] === '') {
             cmdMenu(msg, params);
@@ -117,11 +94,16 @@ var MapManager = MapManager || (function () {
     }
     //Parse Commands
     var cmdMenu = function (msg, params) {
+        var isGm = isPlayerGm(msg.playerid);
+        if (!isGm) {
+            cmdList(msg, '');
+            return;
+        }
         var output = getMenu(msg);
-        sendOutput(msg, '');
+        whisper(msg, output);
     }
     var cmdList = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
 
         var mapsToList = state.MapManager.maps;
         if (!isGm) {
@@ -191,14 +173,14 @@ var MapManager = MapManager || (function () {
         Campaign().set("playerspecificpages", playerPages);
     }
     var cmdReJoinAll = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
         Campaign().set("playerspecificpages", false);
     }
     var cmdEditList = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -265,7 +247,7 @@ var MapManager = MapManager || (function () {
         }
     }
     var cmdChangeLimit = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -279,7 +261,7 @@ var MapManager = MapManager || (function () {
         }
     }
     var cmdChangeSortOrder = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -288,16 +270,17 @@ var MapManager = MapManager || (function () {
         }
     }
     var cmdChangeOutputType = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
+        log(params[1]);
         if (params[1] !== undefined) {
             state.MapManager.config.outputType = params[1];
         }
     }
     var cmdChangeOutputSize = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -344,7 +327,7 @@ var MapManager = MapManager || (function () {
 
     //get Output
     var getMenu = function (msg) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         var output = '';
         var imgCogwheel = '<img src="https://s3.amazonaws.com/files.d20.io/images/341389502/7PX4fvcTsdEZ0_6vkN_tLw/max.png?1683853925" style="margin-top:-4px;" width="10px" height="10px">';
 
@@ -437,7 +420,9 @@ var MapManager = MapManager || (function () {
             var row1 = myTable.addRow();
             row1.style += ' background:#04AA6D;"';
             row1.addColumn(link(apiCall + ' rejoin', 'Rejoin'));
-            row1.addColumn(link(apiCall + ' rejoinall', 'Rejoin All'));
+            if (isGm) {
+                row1.addColumn(link(apiCall + ' rejoinall', 'Rejoin All'));
+            }
             output += myTable.createHtml();
         }
 
@@ -452,8 +437,8 @@ var MapManager = MapManager || (function () {
             row1.style += ' background:#04AA6D;"';
             row1.addColumn(link(apiCall + ' changelimit top ?{Amount}', 'Top x'));
             row1.addColumn(link(apiCall + ' changelimit last ?{Amount}', 'Last X'));
-            row1.addColumn(link(apiCall + ' changesortorder ?{Order|drawer, Drawer|asc, Ascending|desc, Descending}', 'Sort Order'));
-            row1.addColumn(link(apiCall + ' changeoutputtype ?{Output To|Handout, handout|Whisper, whisper|Chat, chat}', 'Output To'));
+            row1.addColumn(link(apiCall + ' changesortorder ?{Order|drawer,Drawer|asc,Ascending|desc,Descending}', 'Sort Order'));
+            row1.addColumn(link(apiCall + ' changeoutputtype ?{Output To|Handout,handout|Whisper,whisper|Chat,chat}', 'Output To'));
             row1.addColumn(link(apiCall + ' changeoutputsize height ?{Height|' + state.MapManager.config.handoutHeight + '}', 'Output Height X'));
             row1.addColumn(link(apiCall + ' changeoutputsize width ?{Width|' + state.MapManager.config.handoutWidth + '}', 'Output Width X'));
 
@@ -491,11 +476,7 @@ var MapManager = MapManager || (function () {
                 break;
         }
 
-        var isGm = playerIsGM(msg.playerid);
-        if (msg.playerid === 'gm') {
-            isGm = true;
-        }
-        var who = msg.who;
+        var isGm = isPlayerGm(msg.playerid);
 
         var imgCogwheel = '<img src="https://s3.amazonaws.com/files.d20.io/images/341389502/7PX4fvcTsdEZ0_6vkN_tLw/max.png?1683853925" style="margin-top:-4px;" width="10px" height="10px">'
 
@@ -514,7 +495,8 @@ var MapManager = MapManager || (function () {
         headerColumn.attributes = 'colspan="10"';
         for (var key in mapsToList) {
             var map = mapsToList[key];
-            var publicStyle = (map.isPublic ? 'color:#04AA6D;' : 'color:#ff0800;');
+            if (map)
+                var publicStyle = (map.isPublic ? 'color:#04AA6D;' : 'color:#ff0800;');
 
             var row = myTable.addRow();
             row.addColumn(link(apiCall + ' move ' + map.id, map.name, publicStyle));
@@ -525,10 +507,17 @@ var MapManager = MapManager || (function () {
             }
         }
         var output = myTable.createHtml();
+
+        if (!isGm) {
+            var myTable2 = table();
+            var navRow = myTable2.addRow();
+            navRow.addColumn(link(apiCall + ' rejoin', 'Rejoin'));
+            output += myTable2.createHtml();
+        }
         return output;
     }
     var getEditList = function (msg, mapsToList) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -565,8 +554,6 @@ var MapManager = MapManager || (function () {
     }
     var getListCategories = function (msg) {
         var imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
-
-        var isGm = playerIsGM(msg.playerid);
 
         var categoryTable = table();
         var categoryHeaderRow = categoryTable.addRow();
@@ -640,13 +627,10 @@ var MapManager = MapManager || (function () {
     }
     var addNewMap = function (newMap) {
         var mapId = newMap.get("_id");
-        var mapName = newMap.get("name");
 
         var obj = state.MapManager.maps.find(m => m.id === mapId);
         if (obj === undefined) {
             var mapObj = { id: mapId }
-
-            var mapsToList = state.MapManager.maps.push(mapObj);
         }
     }
     var updateMap = function (newMap) {
@@ -702,7 +686,7 @@ var MapManager = MapManager || (function () {
         }
     }
     var createTeleporter = function (msg, params) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
         var player = getObj('player', msg.playerid);
         var mapId = player.get('lastpage');
@@ -731,13 +715,13 @@ var MapManager = MapManager || (function () {
 
     }
     var resetMaps = function (msg) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
         state.MapManager.maps = [];
         updateMapList(msg);
     }
     var resetCategories = function (msg) {
-        var isGm = playerIsGM(msg.playerid);
+        var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
         state.MapManager.categories = [];
         var mapsToCheck = state.MapManager.maps.filter(m => m.categories !== undefined);
@@ -752,6 +736,13 @@ var MapManager = MapManager || (function () {
     }
 
     //Utility
+    var isPlayerGm = (player) => {
+        if (player === 'gm') {
+            return true;
+        }
+        return playerIsGM(player);
+
+    }
     var getMessageFooter = function (isGm) {
         var output = getUtilTable(isGm);
         output += getNavTable(isGm);
@@ -815,7 +806,7 @@ var MapManager = MapManager || (function () {
         return navTable.createHtml()
     }
     var mapPermission = function (playerId, mapId) {
-        var isGm = playerIsGM(playerId);
+        var isGm = isPlayerGm(playerId);
         var obj = state.MapManager.maps.find(m => m.id === mapId);
         if (obj === undefined) {
             return false;
@@ -823,7 +814,7 @@ var MapManager = MapManager || (function () {
         if (isGm) {
             return true;
         }
-        if (obj.public) {
+        if (obj.isPublic) {
             return true;
         }
         return false;
@@ -938,7 +929,12 @@ var MapManager = MapManager || (function () {
 
     //Chat functions
     const sendOutput = function (msg, output) {
-        switch (state.MapManager.config.output) {
+        var isGm = isPlayerGm(msg.playerid);
+        var outputType = state.MapManager.config.outputType;
+        if (!isGm) {
+            outputType = 'whisper';
+        }
+        switch (outputType) {
             case 'handout':
                 updateHandout(msg, output)
                 break;
@@ -949,7 +945,7 @@ var MapManager = MapManager || (function () {
                 chat(output)
                 break;
             default:
-                updateHandout(msg, output)
+                whisper(msg, output)
                 break;
         }
     }
@@ -987,8 +983,7 @@ var MapManager = MapManager || (function () {
         var mapToList = updateMap(newMap);
         if (mapToList !== false) {
             mapsToList.push(mapToList);
-            var msg = { "content": apiCall, "playerid": "gm", "type": "api", "who": "gm" }
-            var output = getEditList(msg, mapsToList);
+            var output = getEditList(msgConst, mapsToList);
             whisper(msgConst, output)
         }
     }
@@ -999,27 +994,29 @@ var MapManager = MapManager || (function () {
             state.MapManager = state.MapManager || {};
             state.MapManager = {
                 config: {
-                    version: version,
-                    sortOrder: 'drawer',
-                    listTopAmount: 5,
-                    listLastAmount: 5,
-                    outputType: 'handout',
-                    handoutHeight: 500,
-                    handoutWidth: 500,
-                },
-                maps: [],
-                categories: [],
-                teleporter: [],
+                    version: 0
+                }
             };
             whisper(msgConst, scriptName + ' Initialized');
             getHandout();
         }
         if (state.MapManager.config.version !== version) {
-            updateVersion();
+            whisper(msgConst, 'Update Version from ' + state.MapManager.config.version + ' to ' + version);
+            state.MapManager.config.version = version;
+
+            if (!state.MapManager.config.sortOrder) { state.MapManager.config.sortOrder = 'drawer' }
+            if (!state.MapManager.config.listTopAmount) { state.MapManager.config.sortOrder = 5 }
+            if (!state.MapManager.config.listLastAmount) { state.MapManager.config.sortOrder = 5 }
+            if (!state.MapManager.config.outputType) { state.MapManager.config.sortOrder = 'whisper' }
+            if (!state.MapManager.config.handoutHeight) { state.MapManager.config.sortOrder = 500 }
+            if (!state.MapManager.config.handoutWidth) { state.MapManager.config.sortOrder = 500 }
+
+
+            if (!state.MapManager.maps) { state.MapManager.maps = [] }
+            if (!state.MapManager.categories) { state.MapManager.categories = [] }
+            if (!state.MapManager.teleporter) { state.MapManager.teleporter = [] }
         }
         log(scriptName + ' Started');
-
-
         updateMapList(msgConst);
     }
     var registerEventHandlers = function () {
