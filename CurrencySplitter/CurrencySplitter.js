@@ -1,3 +1,6 @@
+// Github:   https://github.com/Kerubis/Roll20Api/CurrencySplitter
+// By:       Kerubis
+var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var CurrencySplitter = CurrencySplitter || (function () {
     'use strict';
 
@@ -8,7 +11,7 @@ var CurrencySplitter = CurrencySplitter || (function () {
     var defaultPartySize = 4;
 
     var checkInstall = function () {
-        //sendChat("CurrencySplitter", "/w gm CurrencySplitter Ready");
+        log('CurrencySplitter started')
     };
 
     const getAttr = function (charId, name) {

@@ -1,4 +1,4 @@
-// Github:   https://github.com/Kerubis/Roll20Api/MapManager
+// Github:   https://github.com/Kerubis/Roll20Api/WarlockManager
 // By:       Kerubis
 var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 const WarlockManager = (() => {
@@ -357,6 +357,9 @@ const WarlockManager = (() => {
         toFront(token);
 
         summon.summoncounter++;
+        var attr = getAttr(character.id, "npc_name");
+        attr.setWithWorker({ current: getSummonName(warlock, summon) });
+
         chat(getSummonText(warlock, summon));
 
         notifyObservers('add:token', token, token.id);

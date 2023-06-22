@@ -1,4 +1,4 @@
-// Github:   https://github.com/Kerubis/Roll20Api/MapManager
+// Github:   https://github.com/Kerubis/Roll20Api/Template
 // By:       Kerubis
 var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var Template = Template || (function () {
