@@ -5,7 +5,7 @@ var MapManager = MapManager || (function () {
     'use strict';
 
     const version = '0.2.4';
-    const lastUpdate = 1687442179;
+    const lastUpdate = 1687443341;
 
     const scriptName = 'Map Manager';
     const apiCall = '!mm';
