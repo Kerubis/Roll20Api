@@ -6,7 +6,7 @@ var NPCToken = NPCToken || (function () {
 
     var version = '0.0.2';
     var lastUpdate = 1687440254;
-
+//-----------------Update Values---------------------------------
     var bar1 = '';
     var bar2 = 'npc_ac';
     var bar3 = 'npc_hpformula';
@@ -14,7 +14,7 @@ var NPCToken = NPCToken || (function () {
     var showbar2 = false;
     var showbar3 = true;
     var compactbars = `compact`;
-
+//---------------------------------------------------------------
     var tokenIds = [];
 
     var saveTokenId = function (obj) {
