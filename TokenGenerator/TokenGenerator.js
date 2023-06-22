@@ -156,11 +156,12 @@ var TokenGenerator = TokenGenerator || (function() {
     var registerEventHandlers = function() {
         on('add:graphic', saveTokenId);
         //on('change:graphic', setTokenAttributes);
+        WarlockManager.RegisterObserver('add:token', saveTokenId);
     };
 
     return {
         CheckInstall: checkInstall,
-        RegisterEventHandlers: registerEventHandlers
+        RegisterEventHandlers: registerEventHandlers,
     };
 }());
 

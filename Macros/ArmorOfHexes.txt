@@ -1,0 +1,1 @@
+&{template:simple} {{rname=Armor of Hexes}} {{r1=[[1d6cs>4cf<3]]}} {{normal=1}} {{charname=@{selected|character_name}}}

@@ -21,76 +21,76 @@ var MapManager = MapManager || (function () {
         switch (params[0]) {
             case "menu":
                 cmdMenu(msg, params);
-                return;
+                break;
             case "help":
                 cmdMenu(msg, params);
-                return;
+                break;
             case "list":
                 cmdList(msg, params);
-                return;
+                break;
             case "move":
                 cmdMove(msg, params);
-                return;
+                break;
             case "moveplayer":
                 cmdMovePlayer(msg, params);
-                return;
+                break;
             case "moveall":
                 cmdMoveAll(msg, params);
-                return;
+                break;
             case "rejoin":
                 cmdReJoin(msg, params);
-                return;
+                break;
             case "rejoinall":
                 cmdReJoinAll(msg, params);
-                return;
+                break;
             case "editlist":
                 cmdEditList(msg, params);
-                return;
+                break;
             case "edit":
                 cmdEditMap(msg, params);
-                return;
+                break;
             case "updatemaps":
                 cmdUpdateMapList(msg, params);
-                return;
+                break;
             case "category":
                 cmdCategory(msg, params);
-                return;
+                break;
             case "changelimit":
                 cmdChangeLimit(msg, params);
-                return;
+                break;
             case "changesortorder":
                 cmdChangeSortOrder(msg, params);
-                return;
+                break;
             case "changeoutputtype":
                 cmdChangeOutputType(msg, params);
-                return;
+                break;
             case "changeoutputsize":
                 cmdChangeOutputSize(msg, params);
-                return;
+                break;
             case "updatehandout":
                 cmdUpdateHandout(msg, params);
-                return;
+                break;
             case "teleporter":
                 cmdTeleporter(msg, params)
-                return;
+                break;
             case "backup":
                 cmdBackupConfig(msg, params);
-                return;
+                break;
             case "resetmaps":
                 cmdResetMaps(msg, params);
-                return;
+                break;
             case "resetcategories":
                 cmdResetCategories(msg, params);
-                return;
+                break;
             case "test":
                 cmdTest(msg, params)
-                return;
+                break;
             case "Nah":
                 whisper(msg.who, 'Woah, no data lost!');
-                return;
                 break;
+            default:
+                unknownCommand(msg, params[0]);
         }
-        unknownCommand(msg, params[0]);
     }
     //Parse Commands
     var cmdMenu = function (msg, params) {
@@ -274,7 +274,7 @@ var MapManager = MapManager || (function () {
         if (!isGm) {
             return;
         }
-        log(params[1]);
+        log(params);
         if (params[1] !== undefined) {
             state.MapManager.config.outputType = params[1];
         }
@@ -1005,11 +1005,11 @@ var MapManager = MapManager || (function () {
             state.MapManager.config.version = version;
 
             if (!state.MapManager.config.sortOrder) { state.MapManager.config.sortOrder = 'drawer' }
-            if (!state.MapManager.config.listTopAmount) { state.MapManager.config.sortOrder = 5 }
-            if (!state.MapManager.config.listLastAmount) { state.MapManager.config.sortOrder = 5 }
-            if (!state.MapManager.config.outputType) { state.MapManager.config.sortOrder = 'whisper' }
-            if (!state.MapManager.config.handoutHeight) { state.MapManager.config.sortOrder = 500 }
-            if (!state.MapManager.config.handoutWidth) { state.MapManager.config.sortOrder = 500 }
+            if (!state.MapManager.config.listTopAmount) { state.MapManager.config.listTopAmount = 5 }
+            if (!state.MapManager.config.listLastAmount) { state.MapManager.config.listLastAmount = 5 }
+            if (!state.MapManager.config.outputType) { state.MapManager.config.outputType = 'whisper' }
+            if (!state.MapManager.config.handoutHeight) { state.MapManager.config.handoutHeight = 500 }
+            if (!state.MapManager.config.handoutWidth) { state.MapManager.config.handoutWidth = 500 }
 
 
             if (!state.MapManager.maps) { state.MapManager.maps = [] }

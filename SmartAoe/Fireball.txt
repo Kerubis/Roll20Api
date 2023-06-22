@@ -1,23 +1,32 @@
-!smartaoe {{  
+!smartaoe {{
+    --title|Fireball
+    --leftsub|Slot level 4
+    --rightsub|DC @{selected|spell_save_dc} DEX
+
+    --titlecardbackground|linear-gradient(#CA0A01, #EDD33C)
+
     --aoeType|circle, float
     --forceIntersection|1
     --radius|20ft
     --origin|nearest, face
     --minGridArea|0.25
     --minTokArea|0.25
-    --fx|burn-fire
     --dc|@{selected|spell_save_dc}
     --saveFormula|5eDEX
     --damageFormula1|[[9d6]]
     --damageType1|fire
     --ignore|SmartAOE_ignore,1 
     --instant|1
-  
+    --affectsCaster|1
+
+    --fx|burn-fire
     --aoeColor|#F3470050
     --aoeOutlineColor|#F34700
+    --controlTokName|CiriAoEControlToken
 
-    --autoApply|1
+    --autoApply|0
     --bar|3
     --zeroHPmarker|dead
-    --nooutput|1
+
+    --desc|A bright streak flashes from your pointing finger to a point you choose within range and then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot-radius sphere centered on that point must make a Dexterity saving throw. A target takes fire damage on a failed save, or half as much damage on a successful one.%br%%br%The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.
   }}

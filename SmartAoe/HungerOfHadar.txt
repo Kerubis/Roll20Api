@@ -1,0 +1,35 @@
+!smartaoe {{
+    --title|Hunger of Hadar
+    --leftsub|Slot level 4
+    --rightsub|DC @{selected|spell_save_dc} DEX
+    
+    --titlecardbackground|linear-gradient(#313678, #975CAA)
+
+    --aoeType|circle, float
+    --forceIntersection|1
+    --radius|20ft
+    --origin|nearest, face
+    --minGridArea|0.25
+    --minTokArea|0.25
+    --dc|@{selected|spell_save_dc}
+    --saveFormula|5eDEX
+    --damageFormula1|[[2d6]]
+    --damageType1|cold
+    --damageFormula2|[[2d6]]
+    --damageType2|acid
+    --instant|0
+    --ignore|SmartAOE_ignore,1 
+    --affectsCaster|1
+    --casterCondition|blue
+
+    --fx|burn-death
+    --aoeColor|#5C3A6Daa
+    --aoeOutlineColor|#A142CF
+    --controlTokName|CiriAoEControlToken
+
+    --autoApply|0
+    --bar|3
+    --zeroHPmarker|dead
+
+    --desc|You open a gateway to the dark between the stars, a region infested with unknown horrors. A 20-foot-radius sphere of blackness and bitter cold appears, centered on a point with range and lasting for the duration. This void is filled with a cacophony of soft whispers and slurping noises that can be heard up to 30 feet away. No light, magical or otherwise, can illuminate the area, and creatures fully within the area are blinded.%br%%br%The void creates a warp in the fabric of space, and the area is difficult terrain. Any creature that starts its turn in the area takes cold damage. Any creature that ends its turn in the area must succeed on a Dexterity saving throw or take acid damage as milky, otherworldly tentacles rub against it.
+  }}
