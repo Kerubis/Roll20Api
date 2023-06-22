@@ -5,7 +5,7 @@ var MapManager = MapManager || (function () {
     'use strict';
 
     const version = '0.2.4';
-    const lastUpdate = 1684106306;
+    const lastUpdate = 1687442179;
 
     const scriptName = 'Map Manager';
     const apiCall = '!mm';
@@ -456,6 +456,7 @@ var MapManager = MapManager || (function () {
             row2.style += ' background:#04AA6D;"';
             row2.addColumn(link(apiCall + ' updatemaps', 'Update Maps'));
             row2.addColumn(link(apiCall + ' backup', 'Backup Config'));
+            row2.addColumn(link(apiCall + ' updatehandout', 'Update Handout'));
             row2.addColumn(link(apiCall + '  ?{U sure?|Nah,|Reset,resetmaps}', 'Reset Maps'));
             row2.addColumn(link(apiCall + '  ?{U sure?|Nah,|Reset,resetcategories}', 'Reset Categories'));
 
@@ -664,13 +665,14 @@ var MapManager = MapManager || (function () {
             state.MapManager.categories.sort();
         }
     }
-    const removeCategory = function (removeCategory) {
+    const removeCategory = function (msg, removeCategory) {
         var mapsToCheck = state.MapManager.maps.filter(m => m.categories.includes(removeCategory));
         if (mapsToCheck.length === 0) {
             var index = state.MapManager.categories.indexOf(removeCategory);
             state.MapManager.categories.splice(index, 1);
         } else {
-            sendOutput(msg, 'Category can not be removed while assigned to maps')
+            var output = span('Category can not be removed while assigned to maps');            
+            sendOutput(msg, output);
         }
     }
     const addCategoryToMap = function (addCategory, toMap) {
