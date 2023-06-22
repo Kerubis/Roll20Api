@@ -119,7 +119,7 @@ var NPCToken = NPCToken || (function () {
     };
 
     var checkInstall = function () {
-        log('Token Generator started')
+        log('NPCToken started')
     };
     var registerEventHandlers = function () {
         on('add:graphic', saveTokenId);
