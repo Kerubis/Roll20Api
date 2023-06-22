@@ -4,14 +4,14 @@ var API_Meta = API_Meta || {}; //eslint-disable-line no-var
 var MapManager = MapManager || (function () {
     'use strict';
 
-    var version = '0.2.4';
-    var lastUpdate = 1684106306;
+    const version = '0.2.4';
+    const lastUpdate = 1684106306;
 
-    var scriptName = 'Map Manager';
-    var apiCall = '!mm';
+    const scriptName = 'Map Manager';
+    const apiCall = '!mm';
 
 
-    var msgConst = { "content": apiCall, "playerid": "gm", "type": "api", "who": "gm" }
+    const msgConst = { "content": apiCall, "playerid": "gm", "type": "api", "who": "gm" }
     const handleCommand = function (msg, params) {
         if (params[0] === '') {
             cmdMenu(msg, params);
@@ -93,7 +93,7 @@ var MapManager = MapManager || (function () {
         }
     }
     //Parse Commands
-    var cmdMenu = function (msg, params) {
+    const cmdMenu = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             cmdList(msg, '');
@@ -102,8 +102,8 @@ var MapManager = MapManager || (function () {
         var output = getMenu(msg);
         whisper(msg, output);
     }
-    var cmdList = function (msg, params) {
-        var isGm = isPlayerGm(msg.playerid);
+    const cmdList = function (msg, params) {
+        const isGm = isPlayerGm(msg.playerid);
 
         var mapsToList = state.MapManager.maps;
         if (!isGm) {
@@ -131,7 +131,7 @@ var MapManager = MapManager || (function () {
         var output = getMapList(msg, mapsToList)
         sendOutput(msg, output);
     }
-    var cmdMove = function (msg, params) {
+    const cmdMove = function (msg, params) {
         if (!mapPermission(msg.playerid, params[1])) {
             return;
         }
@@ -144,7 +144,7 @@ var MapManager = MapManager || (function () {
         Campaign().set("playerspecificpages", false);
         Campaign().set("playerspecificpages", playerPages);
     }
-    var cmdMovePlayer = function (msg, params) {
+    const cmdMovePlayer = function (msg, params) {
         var playerPages = Campaign().get("playerspecificpages");
         if (playerPages === false) {
             playerPages = {};
@@ -154,14 +154,14 @@ var MapManager = MapManager || (function () {
         Campaign().set("playerspecificpages", false);
         Campaign().set("playerspecificpages", playerPages);
     }
-    var cmdMoveAll = function (msg, params) {
+    const cmdMoveAll = function (msg, params) {
         var playerPages = false
 
         Campaign().set("playerspecificpages", false);
         Campaign().set("playerspecificpages", playerPages);
         Campaign().set("playerpageid", params[1]);
     }
-    var cmdReJoin = function (msg, params) {
+    const cmdReJoin = function (msg, params) {
         var playerPages = Campaign().get("playerspecificpages");
         if (playerPages[msg.playerid] !== undefined) {
             delete playerPages[msg.playerid];
@@ -172,14 +172,14 @@ var MapManager = MapManager || (function () {
         Campaign().set("playerspecificpages", false);
         Campaign().set("playerspecificpages", playerPages);
     }
-    var cmdReJoinAll = function (msg, params) {
+    const cmdReJoinAll = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
         Campaign().set("playerspecificpages", false);
     }
-    var cmdEditList = function (msg, params) {
+    const cmdEditList = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
@@ -207,7 +207,7 @@ var MapManager = MapManager || (function () {
         var output = getEditList(msg, mapsToList);
         sendOutput(msg, output);
     }
-    var cmdEditMap = function (msg, params) {
+    const cmdEditMap = function (msg, params) {
         var mapToChange = state.MapManager.maps.find(m => m.id === params[1]);
 
         switch (params[2]) {
@@ -219,10 +219,10 @@ var MapManager = MapManager || (function () {
                 break;
         }
     }
-    var cmdUpdateMapList = function (msg, params) {
+    const cmdUpdateMapList = function (msg, params) {
         updateMapList(msg);
     }
-    var cmdCategory = function (msg, params) {
+    const cmdCategory = function (msg, params) {
         switch (params[1]) {
             case "add":
                 addCategory(params[2]);
@@ -246,7 +246,7 @@ var MapManager = MapManager || (function () {
                 break;
         }
     }
-    var cmdChangeLimit = function (msg, params) {
+    const cmdChangeLimit = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
@@ -260,8 +260,8 @@ var MapManager = MapManager || (function () {
                 break;
         }
     }
-    var cmdChangeSortOrder = function (msg, params) {
-        var isGm = isPlayerGm(msg.playerid);
+    const cmdChangeSortOrder = function (msg, params) {
+        const isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -269,8 +269,8 @@ var MapManager = MapManager || (function () {
             state.MapManager.config.sortOrder = params[1];
         }
     }
-    var cmdChangeOutputType = function (msg, params) {
-        var isGm = isPlayerGm(msg.playerid);
+    const cmdChangeOutputType = function (msg, params) {
+        const isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -279,7 +279,7 @@ var MapManager = MapManager || (function () {
             state.MapManager.config.outputType = params[1];
         }
     }
-    var cmdChangeOutputSize = function (msg, params) {
+    const cmdChangeOutputSize = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
@@ -297,10 +297,10 @@ var MapManager = MapManager || (function () {
                 break;
         }
     }
-    var cmdUpdateHandout = function (msg, params) {
+    const cmdUpdateHandout = function (msg, params) {
         sendOutput(msg, '');
     }
-    var cmdTeleporter = function (msg, params) {
+    const cmdTeleporter = function (msg, params) {
 
         switch (params[1]) {
             case "add":
@@ -308,28 +308,28 @@ var MapManager = MapManager || (function () {
                 break;
         }
     }
-    var cmdBackupConfig = function (msg, params) {
+    const cmdBackupConfig = function (msg, params) {
         backupConfig();
     }
-    var cmdResetMaps = function (msg, params) {
+    const cmdResetMaps = function (msg, params) {
         resetMaps(msg);
     }
-    var cmdResetCategories = function (msg, params) {
+    const cmdResetCategories = function (msg, params) {
         resetCategories(msg);
     }
-    var cmdTest = function (msg, params) {
+    const cmdTest = function (msg, params) {
     }
-    var unknownCommand = function (msg, params) {
+    const unknownCommand = function (msg, params) {
         var response = 'Unknown Command';
         response += '<br>' + params;
         whisper(msgConst, response);
     }
 
     //get Output
-    var getMenu = function (msg) {
-        var isGm = isPlayerGm(msg.playerid);
+    const getMenu = function (msg) {
+        const isGm = isPlayerGm(msg.playerid);
         var output = '';
-        var imgCogwheel = '<img src="https://s3.amazonaws.com/files.d20.io/images/341389502/7PX4fvcTsdEZ0_6vkN_tLw/max.png?1683853925" style="margin-top:-4px;" width="10px" height="10px">';
+        const imgCogwheel = '<img src="https://s3.amazonaws.com/files.d20.io/images/341389502/7PX4fvcTsdEZ0_6vkN_tLw/max.png?1683853925" style="margin-top:-4px;" width="10px" height="10px">';
 
         var categoryDropdown = '';
         if (state.MapManager.categories.length == 1) {
@@ -463,7 +463,7 @@ var MapManager = MapManager || (function () {
         }
         return output;
     }
-    var getMapList = function (msg, mapsToList) {
+    const getMapList = function (msg, mapsToList) {
         if (mapsToList.length === 0) {
             return;
         }
@@ -476,9 +476,9 @@ var MapManager = MapManager || (function () {
                 break;
         }
 
-        var isGm = isPlayerGm(msg.playerid);
+        const isGm = isPlayerGm(msg.playerid);
 
-        var imgCogwheel = '<img src="https://s3.amazonaws.com/files.d20.io/images/341389502/7PX4fvcTsdEZ0_6vkN_tLw/max.png?1683853925" style="margin-top:-4px;" width="10px" height="10px">'
+        const imgCogwheel = '<img src="https://s3.amazonaws.com/files.d20.io/images/341389502/7PX4fvcTsdEZ0_6vkN_tLw/max.png?1683853925" style="margin-top:-4px;" width="10px" height="10px">'
 
         var players = findObjs({ _type: 'player' });
         var playerDropdown = '?{Player';
@@ -516,8 +516,8 @@ var MapManager = MapManager || (function () {
         }
         return output;
     }
-    var getEditList = function (msg, mapsToList) {
-        var isGm = isPlayerGm(msg.playerid);
+    const getEditList = function (msg, mapsToList) {
+        const isGm = isPlayerGm(msg.playerid);
         if (!isGm) {
             return;
         }
@@ -552,8 +552,8 @@ var MapManager = MapManager || (function () {
         }
         return output;
     }
-    var getListCategories = function (msg) {
-        var imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
+    const getListCategories = function (msg) {
+        const imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
 
         var categoryTable = table();
         var categoryHeaderRow = categoryTable.addRow();
@@ -572,8 +572,8 @@ var MapManager = MapManager || (function () {
         output += categoryTable.createHtml();
         return output;
     }
-    var getMapCategories = function (msg, map) {
-        var imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
+    const getMapCategories = function (msg, map) {
+        const imgDelete = '<img src="https://s3.amazonaws.com/files.d20.io/images/341827023/xuAGuxdcaq5tJS3NuNBl5w/max.png?1684103551" style="margin-top:-4px;" width="10px" height="10px">';
 
         var categoryTable = table();
         var categoryHeaderRow = categoryTable.addRow();
@@ -589,7 +589,7 @@ var MapManager = MapManager || (function () {
 
         return categoryTable.createHtml();
     }
-    var getAssignList = function (msg, category) {
+    const getAssignList = function (msg, category) {
         var mapTable = table();
         var mapHeaderRow = mapTable.addRow();
         var mapHeaderColum = mapHeaderRow.addColumn(link(msg.content, 'Assign Maps to ' + category));
@@ -604,13 +604,13 @@ var MapManager = MapManager || (function () {
     }
 
     //get Data
-    var getMapsWithCategory = function (mapsToList, category) {
+    const getMapsWithCategory = function (mapsToList, category) {
         mapsToList = mapsToList.filter(m => m.categories.includes(category));
         return mapsToList;
     }
 
     //Functions
-    var updateMapList = function (msg) {
+    const updateMapList = function (msg) {
         var mapsToList = [];
 
         var pages = findObjs({ _type: 'page' });
@@ -624,8 +624,15 @@ var MapManager = MapManager || (function () {
                 }
             }
         }
+        for (var key in state.MapManager.maps) {
+            var map = state.MapManager.maps[key];
+            var page = getObj('page', map.id);
+            if (page === undefined) {
+                state.MapManager.maps.splice(key, 1);
+            }
+        }
     }
-    var addNewMap = function (newMap) {
+    const addNewMap = function (newMap) {
         var mapId = newMap.get("_id");
 
         var obj = state.MapManager.maps.find(m => m.id === mapId);
@@ -633,7 +640,7 @@ var MapManager = MapManager || (function () {
             var mapObj = { id: mapId }
         }
     }
-    var updateMap = function (newMap) {
+    const updateMap = function (newMap) {
         var mapId = newMap.get("_id");
         var mapName = newMap.get("name");
 
@@ -651,13 +658,13 @@ var MapManager = MapManager || (function () {
         }
         return false;
     }
-    var addCategory = function (addCategory) {
+    const addCategory = function (addCategory) {
         if (!state.MapManager.categories.includes(addCategory)) {
             state.MapManager.categories.push(addCategory);
             state.MapManager.categories.sort();
         }
     }
-    var removeCategory = function (removeCategory) {
+    const removeCategory = function (removeCategory) {
         var mapsToCheck = state.MapManager.maps.filter(m => m.categories.includes(removeCategory));
         if (mapsToCheck.length === 0) {
             var index = state.MapManager.categories.indexOf(removeCategory);
@@ -666,7 +673,7 @@ var MapManager = MapManager || (function () {
             sendOutput(msg, 'Category can not be removed while assigned to maps')
         }
     }
-    var addCategoryToMap = function (addCategory, toMap) {
+    const addCategoryToMap = function (addCategory, toMap) {
         if (addCategory === undefined || toMap === undefined) {
             return;
         }
@@ -675,7 +682,7 @@ var MapManager = MapManager || (function () {
             map.categories.push(addCategory);
         }
     }
-    var removeCategoryFromMap = function (removeCategory, fromMap) {
+    const removeCategoryFromMap = function (removeCategory, fromMap) {
         if (removeCategory === undefined || fromMap === undefined) {
             return;
         }
@@ -685,7 +692,7 @@ var MapManager = MapManager || (function () {
             map.categories.splice(index, 1);
         }
     }
-    var createTeleporter = function (msg, params) {
+    const createTeleporter = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
         var player = getObj('player', msg.playerid);
@@ -714,13 +721,13 @@ var MapManager = MapManager || (function () {
         });
 
     }
-    var resetMaps = function (msg) {
+    const resetMaps = function (msg) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
         state.MapManager.maps = [];
         updateMapList(msg);
     }
-    var resetCategories = function (msg) {
+    const resetCategories = function (msg) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
         state.MapManager.categories = [];
@@ -736,19 +743,19 @@ var MapManager = MapManager || (function () {
     }
 
     //Utility
-    var isPlayerGm = (player) => {
+    const isPlayerGm = (player) => {
         if (player === 'gm') {
             return true;
         }
         return playerIsGM(player);
 
     }
-    var getMessageFooter = function (isGm) {
+    const getMessageFooter = function (isGm) {
         var output = getUtilTable(isGm);
         output += getNavTable(isGm);
         return getQuickTable(isGm);
     }
-    var getQuickTable = function (isGm) {
+    const getQuickTable = function (isGm) {
         var myTable = table();
         var headerRow = myTable.addRow();
         var headerColumn = headerRow.addColumn('Quick Links')
@@ -766,7 +773,7 @@ var MapManager = MapManager || (function () {
         }
         return myTable.createHtml()
     }
-    var getUtilTable = function (isGm) {
+    const getUtilTable = function (isGm) {
         var utilTable = table();
         var utilHeaderRow = utilTable.addRow();
         var utilHeaderColumn = utilHeaderRow.addColumn('Utility')
@@ -781,7 +788,7 @@ var MapManager = MapManager || (function () {
         }
         return utilTable.createHtml()
     }
-    var getNavTable = function (isGm) {
+    const getNavTable = function (isGm) {
         var navTable = table();
         var navHeaderRow = navTable.addRow();
         var navHeaderColumn = navHeaderRow.addColumn('Navigation')
@@ -805,8 +812,8 @@ var MapManager = MapManager || (function () {
         }
         return navTable.createHtml()
     }
-    var mapPermission = function (playerId, mapId) {
-        var isGm = isPlayerGm(playerId);
+    const mapPermission = function (playerId, mapId) {
+        const isGm = isPlayerGm(playerId);
         var obj = state.MapManager.maps.find(m => m.id === mapId);
         if (obj === undefined) {
             return false;
@@ -819,7 +826,7 @@ var MapManager = MapManager || (function () {
         }
         return false;
     }
-    var getHandout = function () {
+    const getHandout = function () {
         const helpIcon = "https://s3.amazonaws.com/files.d20.io/images/127392204/tAiDP73rpSKQobEYm5QZUw/thumb.png?15878425385";
 
         // find handout
@@ -830,7 +837,7 @@ var MapManager = MapManager || (function () {
         }
         return handout;
     }
-    var updateHandout = function (msg, output) {
+    const updateHandout = function (msg, output) {
         var handout = getHandout();
         var outputStyle = 'width:' + state.MapManager.config.handoutWidth + 'px;height:' + state.MapManager.config.handoutHeight + 'px;float:left;overflow-x:hidden;overflow-x:hidden;margin-left:5px;padding:0 5px';
 
@@ -839,11 +846,11 @@ var MapManager = MapManager || (function () {
 
         handout.set("notes", menuOutput + output);
     }
-    var backupConfig = function () {
+    const backupConfig = function () {
         var handout = getHandout();
         handout.set("gmnotes", JSON.stringify(state.MapManager, null, 2));
     }
-    var parseJson = function (str) {
+    const parseJson = function (str) {
         var obj;
         try {
             obj = JSON.parse(str);
@@ -965,7 +972,7 @@ var MapManager = MapManager || (function () {
 
 
     //Event Handlers
-    var handleInput = function (msg) {
+    const handleInput = function (msg) {
         if (msg.type !== "api") {
             return;
         }
@@ -975,10 +982,10 @@ var MapManager = MapManager || (function () {
         let args = msg.content.replace(apiCall, '').trim().split(/\s/);
         handleCommand(msg, args);
     }
-    var handeNewMap = function (newMap) {
+    const handeNewMap = function (newMap) {
         addNewMap(newMap);
     }
-    var handleUpdateMap = function (newMap) {
+    const handleUpdateMap = function (newMap) {
         var mapsToList = [];
         var mapToList = updateMap(newMap);
         if (mapToList !== false) {
@@ -989,7 +996,7 @@ var MapManager = MapManager || (function () {
     }
 
     //API Functions
-    var checkInstall = function () {
+    const checkInstall = function () {
         if (!state.MapManager) {
             state.MapManager = state.MapManager || {};
             state.MapManager = {
@@ -1019,7 +1026,7 @@ var MapManager = MapManager || (function () {
         log(scriptName + ' Started');
         updateMapList(msgConst);
     }
-    var registerEventHandlers = function () {
+    const registerEventHandlers = function () {
         on('chat:message', handleInput);
         on('add:page', handeNewMap);
         on('change:page', handleUpdateMap);
