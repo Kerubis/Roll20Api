@@ -5,7 +5,7 @@ var Template = Template || (function () {
     'use strict';
 
     var version = '0.0.1';
-    var lastUpdate = 1684106306;
+    var lastUpdate = 1687440254;
 
     //Replace Template with new API Name
     var scriptName = 'Template';

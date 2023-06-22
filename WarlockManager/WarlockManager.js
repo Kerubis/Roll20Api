@@ -5,7 +5,7 @@ const WarlockManager = (() => {
     'use strict';
 
     var version = '0.0.2';
-    var lastUpdate = 1684106306;
+    var lastUpdate = 1687440254;
     var observers = {
         "add:token": [],
     };
