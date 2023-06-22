@@ -1,0 +1,32 @@
+!wm addwarlock @{selected|character_id} Lord Levistus
+!wm changepatreonname @{selected|character_id} Lord Levistus
+!wm setsoulcounter @{selected|character_id} 105
+!wm increasesoulcounter @{selected|character_id}
+
+//Pseudodragon
+!wm addsummon @{selected|character_id} @{target|character_id} 
+!wm changesummonname @{selected|character_id} @{target|character_id} Undefeatable %3
+!wm changesummontext @{selected|character_id} @{target|character_id} %2 is summoned from hell to serve %1.
+!wm changesummoncounter @{selected|character_id} @{target|character_id} 37
+
+//Quasit
+!wm addsummon @{selected|character_id} @{target|character_id} 
+!wm changesummonname @{selected|character_id} @{target|character_id} Rufus %3
+!wm changesummontext @{selected|character_id} @{target|character_id} As %2 tries to return to The Abyss, he is forced back to serve his enemy %1.
+!wm changesummoncounter @{selected|character_id} @{target|character_id} 7
+
+//Imp
+!wm addsummon @{selected|character_id} @{target|character_id} 
+!wm changesummonname @{selected|character_id} @{target|character_id} Zogrun %3
+!wm changesummontext @{selected|character_id} @{target|character_id} %2 is summoned from hell to serve %1.
+
+//Sprite
+!wm addsummon @{selected|character_id} @{target|character_id} 
+!wm changesummonname @{selected|character_id} @{target|character_id} Zinris %3
+!wm changesummontext @{selected|character_id} @{target|character_id} Innocent %2 is enslaved by %1 to do her bidding.
+!wm changesummoncounter @{selected|character_id} @{target|character_id} 2
+
+
+
+
+!wm summon @{selected|token_id}
