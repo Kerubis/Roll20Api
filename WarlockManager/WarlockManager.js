@@ -45,11 +45,17 @@ const WarlockManager = (() => {
             case "addsummon":
                 cmdAddSummon(msg, params);
                 break;
+            case "removesummon":
+                cmdRemoveSummon(msg, params);
+                break;
             case "changesummonname":
                 cmdChangeSummonName(msg, params);
                 break;
             case "changesummontext":
                 cmdChangeSummonText(msg, params);
+                break;
+            case "changesummoncounter":
+                cmdChangeSummonCounter(msg, params);
                 break;
             case "summon":
                 cmdSummon(msg, params);
@@ -140,6 +146,18 @@ const WarlockManager = (() => {
 
         addSummonToWarlock(warlock, params[2]);
     };
+    var cmdRemoveSummon = function (msg, params) {
+        var isGm = isPlayerGm(msg.playerid);
+        if (!isGm) { return; }
+
+        var warlock = state.WarlockManager.Characters.find(c => c.id === params[1]);
+        if (warlock === undefined) {
+            whisper(msgConst, 'Character is not defined as a Warlock, use !wm addwarlock');
+            return;
+        }
+
+        removeSummonFromWarlock(warlock, params[2]);
+    };
     var cmdChangeSummonName = function (msg, params) {
         var isGm = isPlayerGm(msg.playerid);
         if (!isGm) { return; }
@@ -173,6 +191,23 @@ const WarlockManager = (() => {
         }
         const summonText = params.slice(3).join(' ');
         changeSummonText(summon, summonText);
+    };
+    var cmdChangeSummonCounter = function (msg, params) {
+        var isGm = isPlayerGm(msg.playerid);
+        if (!isGm) { return; }
+
+        var warlock = state.WarlockManager.Characters.find(c => c.id === params[1]);
+        if (warlock === undefined) {
+            whisper(msgConst, 'Character is not defined as a Warlock, use !wm addwarlock');
+            return;
+        }
+        var summon = warlock.summons.find(c => c.id === params[2]);
+        if (summon === undefined) {
+            whisper(msgConst, 'Character is not defined as a Warlock, use !wm addsummon');
+            return;
+        }
+        var summonCounter = parseInt(params[3])
+        changeSummonCounter(summon, summonCounter);
     };
     var cmdSummon = function (msg, params) {
         var summonerToken = getObj("graphic", params[1]);
@@ -254,7 +289,6 @@ const WarlockManager = (() => {
     };
     //Functions 
     var addWarlock = function (characterId, patreonName) {
-
         var newWarlock = {
             id: characterId,
             soulcounter: 0,
@@ -277,7 +311,7 @@ const WarlockManager = (() => {
         attr.setWithWorker({ current: warlock.soulcounter });
 
         const msg = { "type": "api", "who": character.get('name') }
-        const content = 'You collected ' + souls + ' for ' + warlock.patreonName + '!';
+        const content = 'You collected ' + souls + ' souls for ' + warlock.patreonName + '!';
         whisper(msg, content);
     };
     var addSummonToWarlock = function (warlock, summonId) {
@@ -291,11 +325,19 @@ const WarlockManager = (() => {
 
         warlock.summons.push(newSummon);
     };
+    var removeSummonFromWarlock = function (warlock, summonId) {
+        var summon = warlock.summons.find(c => c.id === summonId);
+        var index = warlock.summons.indexOf(summon);
+        warlock.summons.splice(index, 1);
+    };
     var changeSummonName = function (summon, summonName) {
         summon.name = summonName;
     };
     var changeSummonText = function (summon, summonText) {
         summon.summontext = summonText;
+    };
+    var changeSummonCounter = function (summon, counter) {
+        summon.summoncounter = counter;
     };
     var summonTarget = function (warlock, summon, pageId, top, left) {
         var character = getObj("character", summon.id);
