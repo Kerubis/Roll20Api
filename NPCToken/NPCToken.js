@@ -1,7 +1,7 @@
-// Github:   https://github.com/Kerubis/Roll20Api/TokenGenerator
+// Github:   https://github.com/Kerubis/Roll20Api/NPCToken
 // By:       Kerubis
 var API_Meta = API_Meta || {}; //eslint-disable-line no-var
-var TokenGenerator = TokenGenerator || (function () {
+var NPCToken = NPCToken || (function () {
     'use strict';
 
     var version = '0.0.2';
@@ -106,7 +106,7 @@ var TokenGenerator = TokenGenerator || (function () {
         var character = getObj("character", obj.get("represents"));
         var attr = getAttrByName(character.id, barAttribute);
         if (barAttribute == "npc_hpformula") {
-            sendChat("TokenGenerator", "/roll " + attr, function (ops) {
+            sendChat("NPCToken", "/roll " + attr, function (ops) {
                 var rollresult = ops[0].content;
                 rollresult = JSON.parse(ops[0].content).total;
                 obj.set(`bar${bar}_value`, rollresult);
@@ -136,6 +136,6 @@ var TokenGenerator = TokenGenerator || (function () {
 
 on("ready", function () {
     'use strict';
-    TokenGenerator.CheckInstall();
-    TokenGenerator.RegisterEventHandlers();
+    NPCToken.CheckInstall();
+    NPCToken.RegisterEventHandlers();
 });
